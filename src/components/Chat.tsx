@@ -24,9 +24,6 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [otherUserTyping, setOtherUserTyping] = useState<boolean>(false);
-  const [lastSeenMessageId, setLastSeenMessageId] = useState<string | null>(
-    null
-  );
 
   // Ref to track the messages container
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,8 +47,8 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
           setMessages(messagesList);
           setLoading(false);
 
-          // Check if there are any unread messages
-          checkForUnreadMessages(messagesList);
+          // Scroll to the bottom of the messages container
+          scrollToBottom();
         },
         (error) => {
           console.error("Error loading messages: ", error);
@@ -124,10 +121,6 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    // Update the last seen message ID when the user reaches the bottom
-    if (messages.length > 0) {
-      setLastSeenMessageId(messages[messages.length - 1].id);
-    }
   };
 
   return (
@@ -154,7 +147,6 @@ const Chat: React.FC<ChatProps> = ({ username }) => {
               )}
             </div>
           ))}
-
           {/* Use the ref to track the end of the messages container */}
           <div ref={messagesEndRef} />
         </div>
